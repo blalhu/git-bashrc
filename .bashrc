@@ -2,9 +2,15 @@ RED='\033[0;31m'
 PURPLE='\033[0;35m'
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
+LGREEN='\033[1;32m'
+TURQ='\033[0;36m'
 LBLUE='\033[1;34m'
+
 NC='\033[0m'
 
+shopt -s checkwinsize
+
+alias ll="ls -lh --color"
 
 git_part(){
 	GIT_STATUS_OUTPUT=$(git status 2>&1)
@@ -15,22 +21,23 @@ git_part(){
 		STAGED=$(git status -s | grep -E "^(M|D)" | wc -l)
                 UNSTAGED=$(git status -s | grep -E "^( M| D)" | wc -l)
 		UNTRACKED=$(git status -s | grep -E "^\?\?" | wc -l)
-		COUNTS=""
+		printf "["
+		printf $GIT_BRANCH
 		if [ $UNTRACKED -gt 0 ]
 		then
-			COUNTS=":$UNTRACKED"
+			printf ":${RED}$UNTRACKED${NC}"
 		fi
 		if [ $UNSTAGED -gt 0 ]
 		then
-			COUNTS="$COUNTS:$UNSTAGED"
+			printf ":${PURPLE}$UNSTAGED${NC}"
 		fi
 		if [ $STAGED -gt 0 ]
 		then
-			COUNTS="$COUNTS:$STAGED"
+			printf ":${YELLOW}$STAGED${NC}"
 		fi
-		echo "[$GIT_BRANCH$COUNTS]"
+		printf "]\n"
 	fi
 }
 
-export PS1="${LBLUE}\u@\h${NC}:\w\$(git_part)\$ "
+export PS1="\u@\h:${LBLUE}\w${NC}\$(git_part)\$ "
 
