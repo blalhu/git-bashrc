@@ -8,8 +8,6 @@ LBLUE='\033[1;34m'
 
 NC='\033[0m'
 
-shopt -s checkwinsize
-
 alias ll="ls -lh --color"
 
 git_part(){
@@ -25,19 +23,20 @@ git_part(){
 		printf $GIT_BRANCH
 		if [ $UNTRACKED -gt 0 ]
 		then
-			printf ":${RED}$UNTRACKED${NC}"
+			printf "!$UNTRACKED"
 		fi
 		if [ $UNSTAGED -gt 0 ]
 		then
-			printf ":${PURPLE}$UNSTAGED${NC}"
+			printf "U$UNSTAGED"
 		fi
 		if [ $STAGED -gt 0 ]
 		then
-			printf ":${YELLOW}$STAGED${NC}"
+			printf "S$STAGED"
 		fi
 		printf "]\n"
 	fi
 }
 
-export PS1="\u@\h:${LBLUE}\w${NC}\$(git_part)\$ "
+export PS1="\[${LGREEN}\]\u@\h\[${NC}\]:\[${LBLUE}\]\w\[${NC}\]\$(git_part)\$ "
 
+shopt -s checkwinsize
