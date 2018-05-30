@@ -17,9 +17,12 @@ git_ahead(){
 	then
 		AHEAD=$(git branch -v | grep -E "^*" | grep -ohE "ahead\s[0-9]+")
 		AHEAD=${AHEAD:6}
-		if [ $AHEAD -gt 0 ]
+		if [[ $AHEAD ]]
 		then
-			printf "$AHEAD"
+			if [ $AHEAD -gt 0 ]
+			then
+				printf "$AHEAD"
+			fi
 		fi
 	fi
 }
@@ -31,9 +34,13 @@ git_behind(){
 	then
 		BEHIND=$(git branch -v | grep -E "^*" | grep -ohE "behind\s[0-9]+")
 		BEHIND=${BEHIND:7}
-		if [ $BEHIND -gt 0 ]
+		echo $BEHIND
+		if [[ $BEHIND ]]
 		then
-			printf "$BEHIND"
+			if [ $BEHIND -gt 0 ]
+			then
+				printf "$BEHIND"
+			fi
 		fi
 	fi
 }
