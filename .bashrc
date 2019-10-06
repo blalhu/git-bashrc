@@ -1,11 +1,13 @@
-LRED='\033[1;31m'
-LPURPLE='\033[1;35m'
-YELLOW='\033[1;33m'
-GREEN='\033[0;32m'
-LGREEN='\033[1;32m'
-TURQ='\033[1;36m'
-LBLUE='\033[1;34m'
-BLUE='\033[0;34m'
+FBlack="\\[$(tput setaf 0)\\]"
+FRed="\\[$(tput setaf 1)\\]"
+FGreen="\\[$(tput setaf 2)\\]"
+FYellow="\\[$(tput setaf 3)\\]"
+FBlue="\\[$(tput setaf 4)\\]"
+FMagenta="\\[$(tput setaf 5)\\]"
+FCyan="\\[$(tput setaf 6)\\]"
+FWhite="\\[$(tput setaf 7)\\]"
+
+NOH="\\[$(tput sgr0)\\]"
 
 NC='\033[0m'
 
@@ -19,7 +21,7 @@ git_test(){
         return
     fi
 
-    printf "${BLUE}[${NC}"
+    printf "["
 
     AHEAD=$(echo "$GIT_BRANCH_OUTPUT" | grep -E "^\*" | grep -ohE "ahead\s[0-9]+")
     AHEAD=${AHEAD:6}
@@ -27,7 +29,7 @@ git_test(){
     then
         if [ $AHEAD -gt 0 ]
         then
-            printf "${YELLOW}$AHEAD${NC}"
+            printf "A$AHEAD "
         fi
     fi
 
@@ -37,7 +39,7 @@ git_test(){
     then
         if [ $BEHIND -gt 0 ]
         then
-            printf "${LRED}$BEHIND${NC}"
+            printf "B$BEHIND "
         fi
     fi
 
@@ -45,30 +47,28 @@ git_test(){
     CURRENT_BRANCH=($CURRENT_BRANCH_LINE)
     CURRENT_BRANCH=${CURRENT_BRANCH[1]}
 
-    printf "${BLUE}$CURRENT_BRANCH${NC}"
+    printf "$CURRENT_BRANCH"
 
     UNTRACKED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^\?\?" | wc -l)
     if [ $UNTRACKED -gt 0 ]
     then
-        printf "${LPURPLE}$UNTRACKED${NC}"
+        printf " ?$UNTRACKED"
     fi
 
     UNSTAGED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^(.M|.D|.A)" | wc -l)
     if [ $UNSTAGED -gt 0 ]
     then
-        printf "${LRED}$UNSTAGED${NC}"
+        printf " U$UNSTAGED"
     fi
 
     STAGED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^(M|D|A)" | wc -l)
     if [ $STAGED -gt 0 ]
     then
-        printf "${GREEN}$STAGED${NC}"
+        printf " S$STAGED"
     fi
 
-	printf "${BLUE}]${NC}"
+	printf "]"
 }
 
+export PS1="$FGreen\u@\h$NOH:$FCyan\w$NOH$FBlue\$(git_test)$NOH\$ "
 
-export PS1="${LGREEN}\u@\h${NC}:${LBLUE}\w${NC}\$(git_test)${LGREEN}\$${NC} "
-
-shopt -s checkwinsize
