@@ -21,7 +21,7 @@ git_test(){
 
     printf "${BLUE}[${NC}"
 
-    AHEAD=$(echo $GIT_BRANCH_OUTPUT | grep -E "^*" | grep -ohE "ahead\s[0-9]+")
+    AHEAD=$(echo "$GIT_BRANCH_OUTPUT" | grep -E "^\*" | grep -ohE "ahead\s[0-9]+")
     AHEAD=${AHEAD:6}
     if [[ $AHEAD ]]
     then
@@ -31,7 +31,7 @@ git_test(){
         fi
     fi
 
-    BEHIND=$(echo $GIT_BRANCH_OUTPUT | grep -E "^*" | grep -ohE "behind\s[0-9]+")
+    BEHIND=$(echo "$GIT_BRANCH_OUTPUT" | grep -E "^\*" | grep -ohE "behind\s[0-9]+")
     BEHIND=${BEHIND:7}
     if [[ $BEHIND ]]
     then
@@ -41,7 +41,7 @@ git_test(){
         fi
     fi
 
-    CURRENT_BRANCH_LINE=$(echo $GIT_BRANCH_OUTPUT | grep -E "^*")
+    CURRENT_BRANCH_LINE=$(echo "$GIT_BRANCH_OUTPUT" | grep -E "^\*")
     CURRENT_BRANCH=($CURRENT_BRANCH_LINE)
     CURRENT_BRANCH=${CURRENT_BRANCH[1]}
 
