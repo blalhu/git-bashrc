@@ -1,19 +1,19 @@
-LRED='\[\033[1;31m\]'
-LPURPLE='\[\033[1;35m\]'
-YELLOW='\[\033[1;33m\]'
-GREEN='\[\033[0;32m\]'
-LGREEN='\[\033[1;32m\]'
-TURQ='\[\033[1;36m\]'
-LBLUE='\[\033[1;34m\]'
-BLUE='\[\033[0;34m\]'
+LRED='\033[1;31m'
+LPURPLE='\033[1;35m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+LGREEN='\033[1;32m'
+TURQ='\033[1;36m'
+LBLUE='\033[1;34m'
+BLUE='\033[0;34m'
 
-NC='\[\033[0m\]'
+NC='\033[0m'
 
 alias ll="ls -lh --color"
 
 git_ahead(){
         GIT_STATUS_OUTPUT=$(git status 2>&1)
-	if [ "${GIT_STATUS_OUTPUT:7:20}" != "Not a git repository" ]
+	if [ "${GIT_STATUS_OUTPUT:7:20}" != "not a git repository" ]
 	then
 		AHEAD=$(git branch -v | grep -E "^*" | grep -ohE "ahead\s[0-9]+")
 		AHEAD=${AHEAD:6}
@@ -30,7 +30,7 @@ git_ahead(){
 
 git_behind(){
         GIT_STATUS_OUTPUT=$(git status 2>&1)
-	if [ "${GIT_STATUS_OUTPUT:7:20}" != "Not a git repository" ]
+	if [ "${GIT_STATUS_OUTPUT:7:20}" != "not a git repository" ]
 	then
 		BEHIND=$(git branch -v | grep -E "^*" | grep -ohE "behind\s[0-9]+")
 		BEHIND=${BEHIND:7}
@@ -47,7 +47,7 @@ git_behind(){
 
 git_branch(){
 	GIT_STATUS_OUTPUT=$(git status 2>&1)
-	if [ "${GIT_STATUS_OUTPUT:7:20}" != "Not a git repository" ]
+	if [ "${GIT_STATUS_OUTPUT:7:20}" != "not a git repository" ]
 	then
 		GIT_BRANCH=$(git branch | grep -E "^\*")
 		GIT_BRANCH=${GIT_BRANCH:2}
@@ -57,7 +57,7 @@ git_branch(){
 
 git_untracked(){
 	GIT_STATUS_OUTPUT=$(git status 2>&1)
-	if [ "${GIT_STATUS_OUTPUT:7:20}" != "Not a git repository" ]
+	if [ "${GIT_STATUS_OUTPUT:7:20}" != "not a git repository" ]
 	then
 		UNTRACKED=$(git status -s | grep -E "^\?\?" | wc -l)
 		if [ $UNTRACKED -gt 0 ]
@@ -70,7 +70,7 @@ git_untracked(){
 
 git_unstaged(){
 	GIT_STATUS_OUTPUT=$(git status 2>&1)
-	if [ "${GIT_STATUS_OUTPUT:7:20}" != "Not a git repository" ]
+	if [ "${GIT_STATUS_OUTPUT:7:20}" != "not a git repository" ]
 	then
 		UNSTAGED=$(git status -s | grep -E "^( M| D| A)" | wc -l)
 		if [ $UNSTAGED -gt 0 ]
@@ -82,8 +82,7 @@ git_unstaged(){
 
 
 git_staged(){
-	GIT_STATUS_OUTPUT=$(git status 2>&1)
-	if [ "${GIT_STATUS_OUTPUT:7:20}" != "Not a git repository" ]
+	if [ "${GIT_STATUS_OUTPUT:7:20}" != "not a git repository" ]
 	then
 		STAGED=$(git status -s | grep -E "^(M|D|A)" | wc -l)
 		if [ $STAGED -gt 0 ]
@@ -93,7 +92,64 @@ git_staged(){
 	fi
 }
 
+git_test(){
+    GIT_BRANCH_OUTPUT=$(git branch -v 2>&1)
+    GIT_STATUS_OUTPUT=$(git status -s -b --ahead-behind 2>&1)
+    if [ $? -ne 0 ]
+    then
+        return
+    fi
 
-export PS1="${LGREEN}\u@\h${NC}:${LBLUE}\w${NC}${BLUE}[${NC}${TURQ}\$(git_ahead)${NC}${LRED}\$(git_behind)${NC}${BLUE}\$(git_branch)${NC}${LRED}\$(git_untracked)${NC}${LPURPLE}\$(git_unstaged)${NC}${YELLOW}\$(git_staged)${NC}${BLUE}]${NC}\$ "
+    printf "${BLUE}[${NC}"
+
+    AHEAD=$(echo $GIT_BRANCH_OUTPUT | grep -E "^*" | grep -ohE "ahead\s[0-9]+")
+    AHEAD=${AHEAD:6}
+    if [[ $AHEAD ]]
+    then
+        if [ $AHEAD -gt 0 ]
+        then
+            printf "${YELLOW}$AHEAD${NC}"
+        fi
+    fi
+
+    BEHIND=$(echo $GIT_BRANCH_OUTPUT | grep -E "^*" | grep -ohE "behind\s[0-9]+")
+    BEHIND=${BEHIND:7}
+    if [[ $BEHIND ]]
+    then
+        if [ $BEHIND -gt 0 ]
+        then
+            printf "${LRED}$BEHIND${NC}"
+        fi
+    fi
+
+    CURRENT_BRANCH_LINE=$(echo $GIT_BRANCH_OUTPUT | grep -E "^*")
+    CURRENT_BRANCH=($CURRENT_BRANCH_LINE)
+    CURRENT_BRANCH=${CURRENT_BRANCH[1]}
+
+    printf "${BLUE}$CURRENT_BRANCH${NC}"
+
+    UNTRACKED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^\?\?" | wc -l)
+    if [ $UNTRACKED -gt 0 ]
+    then
+        printf "${LPURPLE}$UNTRACKED${NC}"
+    fi
+
+    UNSTAGED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^(.M|.D|.A)" | wc -l)
+    if [ $UNSTAGED -gt 0 ]
+    then
+        printf "${LRED}$UNSTAGED${NC}"
+    fi
+
+    STAGED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^(M|D|A)" | wc -l)
+    if [ $STAGED -gt 0 ]
+    then
+        printf "${GREEN}$STAGED${NC}"
+    fi
+
+	printf "${BLUE}]${NC}"
+}
+
+
+export PS1="${LGREEN}\u@\h${NC}:${LBLUE}\w${NC}\$(git_test)${LGREEN}\$${NC} "
 
 shopt -s checkwinsize
