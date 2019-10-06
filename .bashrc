@@ -9,6 +9,8 @@ BLUE='\033[0;34m'
 
 NC='\033[0m'
 
+#######foo
+
 alias ll="ls -lh --color"
 
 git_test(){
