@@ -9,7 +9,7 @@ BLUE='\033[0;34m'
 
 NC='\033[0m'
 
-#######foo
+#######bar
 
 alias ll="ls -lh --color"
 
