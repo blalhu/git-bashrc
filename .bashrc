@@ -9,15 +9,19 @@ NOH="\[\033[00m\]"
 
 alias ll="ls -lh --color"
 
-git_test(){
+_fancy_prompt(){
     GIT_BRANCH_OUTPUT=$(git branch -v 2>&1)
     GIT_STATUS_OUTPUT=$(git status -s -b --ahead-behind 2>&1)
+
+    PROMPT="$FGreen\u@\h$NOH:$FCyan\w$NOH"
+
     if [ $? -ne 0 ]
     then
+        export PS1=$PROMPT"$ "
         return
     fi
 
-    printf "["
+    PROMPT=$PROMPT"$FBlue[$NOH"
 
     AHEAD=$(echo "$GIT_BRANCH_OUTPUT" | grep -E "^\*" | grep -ohE "ahead\s[0-9]+")
     AHEAD=${AHEAD:6}
@@ -25,7 +29,7 @@ git_test(){
     then
         if [ $AHEAD -gt 0 ]
         then
-            printf "A$AHEAD "
+            PROMPT=$PROMPT"$FCyan$AHEAD$NOH"
         fi
     fi
 
@@ -35,34 +39,35 @@ git_test(){
     then
         if [ $BEHIND -gt 0 ]
         then
-            printf "B$BEHIND "
+            PROMPT=$PROMPT"$FRed$BEHIND$NOH"
         fi
     fi
 
     CURRENT_BRANCH=$(echo "$GIT_BRANCH_OUTPUT" | grep -E "^\*" | cut -d " " -f 2)
 
-    printf "$CURRENT_BRANCH"
+    PROMPT=$PROMPT"$FBlue$CURRENT_BRANCH$NOH"
 
     UNTRACKED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^\?\?" | wc -l)
     if [ $UNTRACKED -gt 0 ]
     then
-        printf " ?$UNTRACKED"
+        PROMPT=$PROMPT"$FYellow$UNTRACKED$NOH"
     fi
 
     UNSTAGED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^(.M|.D|.A)" | wc -l)
     if [ $UNSTAGED -gt 0 ]
     then
-        printf " U$UNSTAGED"
+        PROMPT=$PROMPT"$FRed$UNSTAGED$NOH"
     fi
 
     STAGED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^(M|D|A)" | wc -l)
     if [ $STAGED -gt 0 ]
     then
-        printf " S$STAGED"
+        PROMPT=$PROMPT"$FGreen$STAGED$NOH"
     fi
 
-	printf "]"
+	PROMPT=$PROMPT"$FBlue]$NOH"
+	export PS1=$PROMPT"$ "
 }
 
-export PS1="$FGreen\u@\h$NOH:$FCyan\w$NOH$FBlue\$(git_test)$NOH\$ "
+export PROMPT_COMMAND="_fancy_prompt"
 
