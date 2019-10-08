@@ -9,13 +9,15 @@ NOH="\[\033[00m\]"
 
 alias ll="ls -lh --color"
 
+
+
 _fancy_prompt(){
     GIT_BRANCH_OUTPUT=$(git branch -v 2>&1)
     GIT_STATUS_OUTPUT=$(git status -s -b --ahead-behind 2>&1)
-
+    STATUS_EXIT_VALUE=$?
     PROMPT="$FGreen\u@\h$NOH:$FCyan\w$NOH"
 
-    if [ $? -ne 0 ]
+    if [ $STATUS_EXIT_VALUE -ne 0 ]
     then
         export PS1=$PROMPT"$ "
         return
