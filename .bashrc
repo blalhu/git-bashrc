@@ -1,15 +1,11 @@
-FBlack="\\[$(tput setaf 0)\\]"
-FRed="\\[$(tput setaf 1)\\]"
-FGreen="\\[$(tput setaf 2)\\]"
-FYellow="\\[$(tput setaf 3)\\]"
-FBlue="\\[$(tput setaf 4)\\]"
-FMagenta="\\[$(tput setaf 5)\\]"
-FCyan="\\[$(tput setaf 6)\\]"
-FWhite="\\[$(tput setaf 7)\\]"
-
-NOH="\\[$(tput sgr0)\\]"
-
-NC='\033[0m'
+FBlack="\[\033[38;5;0m\]"
+FRed="\[\033[38;5;9m\]"
+FGreen="\[\033[38;5;46m\]"
+FYellow="\[\033[38;5;226\]"
+FBlue="\[\033[38;5;27m\]"
+FMagenta="\[\033[38;5;196m\]"
+FCyan="\[\033[38;5;87m\]"
+NOH="\[\033[00m\]"
 
 alias ll="ls -lh --color"
 
