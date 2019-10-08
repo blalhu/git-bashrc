@@ -14,17 +14,17 @@ _fancy_prompt(){
     local COLOR_UNSTAGED="\[\033[38;5;9m\]"
     local COLOR_NO="\[\033[00m\]"
 
-    local GIT_BRANCH_OUTPUT=$(git branch -v 2>&1)
-    local GIT_STATUS_OUTPUT=$(git status -s -b --ahead-behind 2>&1)
-    local STATUS_EXIT_VALUE=$?
-    local PROMPT="$COLOR_USER_HOST\u@\h$COLOR_NO:$COLOR_PATH\w$COLOR_NO"
-
-    if [ $STATUS_EXIT_VALUE -ne 0 ]
+    git status 2>/dev/null 1>/dev/null
+    if [ $? -ne 0 ]
     then
-        export PS1=$PROMPT"$ "
+        export PS1="$COLOR_USER_HOST\u@\h$COLOR_NO:$COLOR_PATH\w$COLOR_NO$ "
         return
     fi
 
+    local GIT_BRANCH_OUTPUT=$(git branch -v 2>&1)
+    local GIT_STATUS_OUTPUT=$(git status -s -b --ahead-behind 2>&1)
+
+    local PROMPT="$COLOR_USER_HOST\u@\h$COLOR_NO:$COLOR_PATH\w$COLOR_NO"
     PROMPT=$PROMPT"$COLOR_GIT_BASE[$COLOR_NO"
 
     local AHEAD=$(echo "$GIT_BRANCH_OUTPUT" | grep -E "^\*" | grep -ohE "ahead\s[0-9]+")
@@ -69,8 +69,8 @@ _fancy_prompt(){
         PROMPT=$PROMPT"$COLOR_FILE_STAGED$STAGED$COLOR_NO"
     fi
 
-	PROMPT=$PROMPT"$COLOR_GIT_BASE]$COLOR_NO"
-	export PS1=$PROMPT"$ "
+    PROMPT=$PROMPT"$COLOR_GIT_BASE]$COLOR_NO"
+    export PS1=$PROMPT"$ "
 }
 
 export PROMPT_COMMAND="_fancy_prompt"
