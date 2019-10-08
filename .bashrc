@@ -43,9 +43,7 @@ git_test(){
         fi
     fi
 
-    CURRENT_BRANCH_LINE=$(echo "$GIT_BRANCH_OUTPUT" | grep -E "^\*")
-    CURRENT_BRANCH=($CURRENT_BRANCH_LINE)
-    CURRENT_BRANCH=${CURRENT_BRANCH[1]}
+    CURRENT_BRANCH=$(echo "$GIT_BRANCH_OUTPUT" | grep -E "^\*" | cut -d " " -f 2)
 
     printf "$CURRENT_BRANCH"
 
