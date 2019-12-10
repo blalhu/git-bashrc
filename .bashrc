@@ -57,13 +57,13 @@ _fancy_prompt(){
         PROMPT=$PROMPT"$COLOR_FILE_UNTRACKED$UNTRACKED$COLOR_NO"
     fi
 
-    local UNSTAGED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^(.M|.D|.A)" | wc -l)
+    local UNSTAGED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^(.M|.D|.A|.R)" | wc -l)
     if [ $UNSTAGED -gt 0 ]
     then
         PROMPT=$PROMPT"$COLOR_FILE_UNSTAGED$UNSTAGED$COLOR_NO"
     fi
 
-    local STAGED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^(M|D|A)" | wc -l)
+    local STAGED=$(echo "$GIT_STATUS_OUTPUT" | grep -E "^(M|D|A|R)" | wc -l)
     if [ $STAGED -gt 0 ]
     then
         PROMPT=$PROMPT"$COLOR_FILE_STAGED$STAGED$COLOR_NO"
